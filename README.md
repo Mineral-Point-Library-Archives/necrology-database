@@ -1,0 +1,2 @@
+# necrology-database
+Necrology Database
