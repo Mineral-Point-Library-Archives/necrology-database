@@ -34,14 +34,14 @@ function getNestedValue(obj, path) {
 }
 
 function renderItem(res, triggerClickAnalytics) {
-	let birth_place_url = '';
-	let birth_place_id = getNestedValue(res, 'birth_geo_place_id');
-	if (birth_place_id !== '') {
-		birth_place_url =
-			"https://www.google.com/maps/search/?api=1&query=" +
-			getNestedValue(res, 'birth_geo_formatted_address') + "&query_place_id=" +
-			getNestedValue(res, 'birth_geo_place_id');
-	}
+	// let birth_place_url = '';
+	// let birth_place_id = getNestedValue(res, 'birth_geo_place_id');
+	// if (birth_place_id !== '') {
+	// 	birth_place_url =
+	// 		"https://www.google.com/maps/search/?api=1&query=" +
+	// 		getNestedValue(res, 'birth_geo_formatted_address') + "&query_place_id=" +
+	// 		getNestedValue(res, 'birth_geo_place_id');
+	// }
 
 	let title = getNestedValue(res,"name_full");
 	let death_place = getNestedValue(res,"death_place_full");
