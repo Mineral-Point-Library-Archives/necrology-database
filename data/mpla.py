@@ -24,7 +24,6 @@ workbook = load_workbook(filename=args.input, data_only=True)
 GOOGLE_API_KEY = args.key
 gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
 
-# sheet = workbook.active
 sheet = workbook[args.sheet]
 
 # logging config
@@ -32,8 +31,8 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 logging.basicConfig(filename='logs/import-' + timestr + '.csv', filemode='a', format='%(message)s')
 logging.warning('"id","message"')
 
-do_geocode_birth = False
-do_geocode_death = False
+do_geocode_birth = True
+do_geocode_death = True
 
 # spreadsheet column constants
 
@@ -56,7 +55,7 @@ BIRTH_STATE = 11
 OBITUARY_DAY = 3
 OBITUARY_MONTH = 4
 OBITUARY_YEAR = 5
-OBITUARY_NEWSPAPER = 6
+OBITUARY_SOURCE = 6
 OBITUARY_TRANSCRIBED = 28
 
 BIRTH_DAY = 7
@@ -253,7 +252,11 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
         name_last = str(row[NAME_LAST]).strip().capitalize()
     if row[MAIDEN_NAME] is not None:
         name_maiden = str(row[MAIDEN_NAME]).strip().capitalize()
-    name = HumanName(name_salutation + " " + name_first + " " + name_middle + " " + name_last)
+        name_composed = name_salutation + " " + name_first + " " + name_middle + " (" + name_maiden + ") " + name_last
+        name = HumanName(' '.join(name_composed.split()))
+    else:
+        name_composed = name_salutation + " " + name_first + " " + name_middle + " " + name_last
+        name = HumanName(' '.join(name_composed.split()))
     name_full = name.full_name
     if row[GENDER] is not None:
         gender = str(row[GENDER]).strip().upper()
@@ -304,12 +307,15 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
 
     # BIRTH PLACE FULL - concatenate all of the available fields
     birth_place_full = (birth_city + ", " + birth_state)
+    if birth_place_full == ', ':
+        birth_place_full = 'Unknown'
 
     # GEOCODE: BIRTH PLACE
-    if do_geocode_birth:
-        birth_place_geocoded = geocode_place(id, 'birth', birth_place_full)
-    else:
-        birth_place_geocoded = get_geocode_dict()
+    if birth_place_full != 'Unknown':
+        if do_geocode_birth:
+            birth_place_geocoded = geocode_place(id, 'birth', birth_place_full)
+        else:
+            birth_place_geocoded = get_geocode_dict()
 
     # --- PLACE OF DEATH
     death_location = ''
@@ -338,12 +344,15 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
 #         if row[DEATH_COUNTRY] is not None:
 #             death_country = str(row[DEATH_COUNTRY]).strip()
     death_place_full = (death_city + ", " + death_state)
+    if death_place_full == ', ':
+        death_place_full = 'Unknown'
 
     # GEOCODE: DEATH PLACE
-    if do_geocode_death:
-        death_place_geocoded = geocode_place(id, 'death', death_place_full)
-    else:
-        death_place_geocoded = get_geocode_dict()
+    if death_place_full != 'Unknown':
+        if do_geocode_death:
+            death_place_geocoded = geocode_place(id, 'death', death_place_full)
+        else:
+            death_place_geocoded = get_geocode_dict()
 
     # --- DEATH DATE
     death_date_display = ''
@@ -442,6 +451,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     obituary_year_int = None
     obituary_month = ''
     obituary_day = ''
+    obituary_source = ''
     obituary_newspaper = ''
     obituary_transcribed = ''
     obituary_circa = 'N'
@@ -482,8 +492,17 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
                     obituary_date_iso = dt.strftime("%Y-%m-%d")
                 else:
                     logging.warning('"' + str(int(id)) + '","' + "Unable to parse obituary date: " + obituary_date_display + '"')
-    if row[OBITUARY_NEWSPAPER] is not None:
-        obituary_newspaper = str(row[OBITUARY_NEWSPAPER]).strip()
+    if row[OBITUARY_SOURCE] is not None:
+        obituary_source = str(row[OBITUARY_SOURCE]).lower().strip()
+        if obituary_source == 'mp dt':
+            obituary_newspaper = 'The Democrat Tribune (Mineral Point, Wis.)'
+        if obituary_source == 't':
+            obituary_newspaper = 'Mineral Point Tribune (Mineral Point, Wis.) 1869-1938'
+        if obituary_source == 'd':
+            obituary_newspaper = 'Iowa County Democrat (Mineral Point, Wis.) 1877-1938'
+        if obituary_source == 'mfp':
+            obituary_newspaper = "Miners' Free Press (Mineral Point, W.T. [i.e. Wis.]) 1838-1841"
+
     if row[OBITUARY_TRANSCRIBED] is not None:
         obituary_transcribed = str(row[OBITUARY_TRANSCRIBED]).strip()
 

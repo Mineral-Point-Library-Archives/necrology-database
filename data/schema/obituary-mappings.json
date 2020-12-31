@@ -450,6 +450,15 @@
           }
         }
       },
+      "obituary_source": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
       "obituary_newspaper": {
         "type": "text",
         "fields": {

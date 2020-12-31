@@ -52,7 +52,14 @@ function renderItem(res, triggerClickAnalytics) {
 				<Descriptions title={title} column={1} size="small" bordered>
 					<Descriptions.Item label="Date of death">{getNestedValue(res, "death_date_display")}</Descriptions.Item>
 					<Descriptions.Item label="Place of death">{death_place}</Descriptions.Item>
-					<Descriptions.Item label="Place of birth">{ <a href={birth_place_url} target='gmap'>{getNestedValue(res, "birth_place_full")}</a> }</Descriptions.Item>
+					<Descriptions.Item label="Date of birth">{getNestedValue(res, "birth_date_display")}</Descriptions.Item>
+					<Descriptions.Item label="Place of birth">{getNestedValue(res, "birth_place_full")}</Descriptions.Item>
+					<Descriptions.Item label="Place of burial">{getNestedValue(res, "burial_place")}</Descriptions.Item>
+					<Descriptions.Item label="Burial plot">{getNestedValue(res, "burial_plot")}</Descriptions.Item>
+					<Descriptions.Item label="Gender">{getNestedValue(res, "gender")}</Descriptions.Item>
+					<Descriptions.Item label="Obituary newspaper">{getNestedValue(res, "obituary_newspaper")}</Descriptions.Item>
+					<Descriptions.Item label="Obituary date">{getNestedValue(res, "obituary_date_display")}</Descriptions.Item>
+					<Descriptions.Item label="Obituary transcript">{getNestedValue(res, "obituary_transcribed")}</Descriptions.Item>
 				</Descriptions>
 
 				{/*<Collapse ghost={true} defaultActiveKey={[]}>*/}
@@ -99,7 +106,7 @@ const App = () => (
 
 		<Row gutter={16} style={{ padding: 20 }}>
 			<Col span={8}>
-				<Collapse defaultActiveKey={['10', '1', '6']}>
+				<Collapse defaultActiveKey={['2', '1', '4', '6', '7']}>
 					{/*<Panel header="Cemetery" key="8">*/}
 					{/*	<MultiList*/}
 					{/*		componentId="cemetery_facet"*/}
@@ -116,7 +123,7 @@ const App = () => (
 					<Panel header="Place of death" key="2" forceRender>
 						<MultiList
 							componentId="place_of_death_country_facet"
-							dataField="death_country.keyword"
+							dataField="death_geo_country_long.keyword"
 							showSearch={false}
 							size={100}
 							style={{
@@ -127,7 +134,7 @@ const App = () => (
 							showCheckbox/>
 						<MultiList
 							componentId="place_of_death_state_facet"
-							dataField="death_state.keyword"
+							dataField="death_geo_state_long.keyword"
 							showSearch={false}
 							size={100}
 							style={{
@@ -138,7 +145,7 @@ const App = () => (
 							showCheckbox/>
 						<MultiList
 							componentId="place_of_death_city_facet"
-							dataField="death_city.keyword"
+							dataField="death_geo_city.keyword"
 							showSearch={false}
 							size={100}
 							style={{
@@ -212,7 +219,7 @@ const App = () => (
 							style={{
 								marginBottom: 20
 							}}
-							title="Country (Geocode)"
+							title="Country"
 							filterLabel="Place of birth: country (geocode)"
 							showCheckbox/>
 						<MultiList
@@ -223,7 +230,7 @@ const App = () => (
 							style={{
 								marginBottom: 20
 							}}
-							title="State (Geocode)"
+							title="State"
 							filterLabel="Place of birth: state (geocode)"
 							showCheckbox/>
 						<MultiList
@@ -234,42 +241,42 @@ const App = () => (
 							style={{
 								marginBottom: 20
 							}}
-							title="City (Geocode)"
+							title="City"
 							filterLabel="Place of birth: city (geocode)"
 							showCheckbox/>
-						<MultiList
-							componentId="place_of_birth_country_facet"
-							dataField="birth_country.keyword"
-							showSearch={false}
-							size={100}
-							style={{
-								marginBottom: 20
-							}}
-							title="Country"
-							filterLabel="Place of birth: country"
-							showCheckbox/>
-						<MultiList
-							componentId="place_of_birth_state_facet"
-							dataField="birth_state.keyword"
-							showSearch={false}
-							size={100}
-							style={{
-								marginBottom: 20
-							}}
-							title="State"
-							filterLabel="Place of birth: state"
-							showCheckbox/>
-						<MultiList
-							componentId="place_of_birth_city_facet"
-							dataField="birth_city.keyword"
-							showSearch={false}
-							size={100}
-							style={{
-								marginBottom: 20
-							}}
-							title="City"
-							filterLabel="Place of birth: city"
-							showCheckbox/>
+						{/*<MultiList*/}
+						{/*	componentId="place_of_birth_country_facet"*/}
+						{/*	dataField="birth_country.keyword"*/}
+						{/*	showSearch={false}*/}
+						{/*	size={100}*/}
+						{/*	style={{*/}
+						{/*		marginBottom: 20*/}
+						{/*	}}*/}
+						{/*	title="Country"*/}
+						{/*	filterLabel="Place of birth: country"*/}
+						{/*	showCheckbox/>*/}
+						{/*<MultiList*/}
+						{/*	componentId="place_of_birth_state_facet"*/}
+						{/*	dataField="birth_state.keyword"*/}
+						{/*	showSearch={false}*/}
+						{/*	size={100}*/}
+						{/*	style={{*/}
+						{/*		marginBottom: 20*/}
+						{/*	}}*/}
+						{/*	title="State"*/}
+						{/*	filterLabel="Place of birth: state"*/}
+						{/*	showCheckbox/>*/}
+						{/*<MultiList*/}
+						{/*	componentId="place_of_birth_city_facet"*/}
+						{/*	dataField="birth_city.keyword"*/}
+						{/*	showSearch={false}*/}
+						{/*	size={100}*/}
+						{/*	style={{*/}
+						{/*		marginBottom: 20*/}
+						{/*	}}*/}
+						{/*	title="City"*/}
+						{/*	filterLabel="Place of birth: city"*/}
+						{/*	showCheckbox/>*/}
 						{/*<ReactiveOpenStreetMap*/}
 						{/*	componentId="place_of_birth_map"*/}
 						{/*	dataField="birth_geo_location"*/}
@@ -297,10 +304,10 @@ const App = () => (
 							URLParams={true}
 							showCheckbox/>
 					</Panel>
-					<Panel header="Date of death" key="7">
+					<Panel header="Year of death" key="7">
 						<DynamicRangeSlider
 							componentId="death_year_facet"
-							dataField="death_date_  year"
+							dataField="death_date_year"
 							rangeLabels={(min, max) => ({
 								start: min,
 								end: max,
@@ -352,11 +359,23 @@ const App = () => (
 						'name_last.english',
 						'name_last.search',
 						'name_first',
-						'name_first.keyword'
+						'name_first.keyword',
+						'name_maiden',
+						'death_place_full',
+						'birth_place_full',
+						'burial_place',
+						'obituary_newspaper',
+						'obituary_transcribed'
 					]}
 					debounce={0}
 					defaultValue={undefined}
 					fieldWeights={[
+						1,
+						1,
+						1,
+						1,
+						1,
+						1,
 						1,
 						1,
 						1,
